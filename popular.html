@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #result{
+        display: grid;
+        grid-template-columns: repeat(4,25%);
+        padding: 20px;
+        gap: 20px;
+    }
+    #result>div{
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        border: 1px solid black;
+    }
+    #query{
+        width: 500px;
+        height: 30px;
+        padding: 6px;
+    }
+    #yt{
+        width: 200px;
+        height: 100px;
+        margin-right:200px ;
+    }
+    #btn{
+        height: 45px;
+        padding: 6px;
+    }
+    nav{
+        display: flex;
+        flex-direction: row;
+    }
+    #input{
+        margin-top: 35px;
+    }
+</style>
+<body>
+    <nav>
+        <div></div>
+            <img src="https://images.indianexpress.com/2021/02/YouTube-4K-Playback-.jpg" alt="" id="yt">
+        </div>
+        <div id="input">
+            <input type="text" id="query">
+            <button id="btn" onclick="searchVideo()">Search</button>
+        </div>
+    </nav>
+    <div id="result"></div>
+</body>
+<script>
+    let apikey = "AIzaSyBR18JvOz2eeaV_xikESLjxGJmSw4CzZPg";
+    let result = document.getElementById("result");
+    async function searchVideo(){
+        let query = document.getElementById("query").value;
+        let data = await fetchData(query);
+    }
+    async function fetchData(q){
+        let res = await fetch("https://youtube.googleapis.com/youtube/v3/search?key="+apikey+"&q=trending&type=video&part=snippet&maxResults=20");
+        let data = await res.json();
+        console.log(data.items);
+        displayData(data.items);
+    }
+    function displayData(videoList){
+        for(var i=0; i<videoList.length; i++){
+            var thumbnails = videoList[i].snippet.thumbnails.medium.url;
+            var videoId = videoList[i].id.videoId;
+            var div1 = document.createElement("div");
+            div1.addEventListener("click", function(){
+                localStorage.setItem("videoId",videoId);
+                location.href = "video.html"
+            })
+            var img = document.createElement("img");
+            img.setAttribute("src",thumbnails);
+            div1.append(img);
+            result.append(div1);
+        }
+    }
+    searchVideo();
+</script>
+</html>
